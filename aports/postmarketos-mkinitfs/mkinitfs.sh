@@ -185,6 +185,7 @@ create_bootimg()
 	if [ -n "${deviceinfo_dtb}" ]; then
 		kernelfile="${kernelfile}-dtb"
 	fi
+	[ -f "${outfile/initramfs-/dt.img-}" ] && dt_img="${outfile/initramfs-/dt.img-}"
 	mkbootimg \
 		--kernel "${kernelfile}" \
 		--ramdisk "$outfile" \
@@ -195,6 +196,7 @@ create_bootimg()
 		--ramdisk_offset "${deviceinfo_flash_offset_ramdisk}" \
 		--tags_offset "${deviceinfo_flash_offset_tags}" \
 		--pagesize "${deviceinfo_flash_pagesize}" \
+		${dt_img:+ --dt "${dt_img}"} \
 		-o "${outfile/initramfs-/boot.img-}"
 }
 
