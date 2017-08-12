@@ -118,7 +118,8 @@ package() {
 	#dtbTool -o "$pkgdir/boot/dt.img-$_flavor" -s 2048 -p "$srcdir/build/scripts/dtc/" "$srcdir/build/arch/arm/boot/"
 	#chmod 644 "$pkgdir/boot/dt.img-$_flavor"
 	install -Dm644 "$srcdir/fp2-sibon-17.06.4-dt.img" \
-		"$pkgdir/boot/dt.img-$_flavor"
+		"$pkgdir/boot/dt.img"
+#		"$pkgdir/boot/dt.img-$_flavor"
 
 	cd "$srcdir"/build
 	unset LDFLAGS
