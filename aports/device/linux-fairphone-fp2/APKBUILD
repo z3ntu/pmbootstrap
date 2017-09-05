@@ -11,7 +11,7 @@
 
 _vendor=fairphone
 _flavor=fairphone-fp2
-_hash="4c0f2c3c6f394162fdb98f5e20dec346e8f4cfdc"
+_hash="1b9ae5cd7249fc2b354092798fb889c5917d8a0e"
 _config="config-${_flavor}.armhf"
 
 pkgname=linux-${_flavor}
@@ -25,7 +25,7 @@ arch="armhf"
 pkgdesc="LineageOS kernel for Fairphone 2"
 url="https://github.com/LineageOS/android_kernel_fairphone_msm8974"
 depends="postmarketos-mkinitfs"
-makedepends="perl sed installkernel bash gmp-dev bc linux-headers elfutils-dev python2"
+makedepends="perl sed installkernel bash gmp-dev bc linux-headers elfutils-dev python2 dtbtool"
 options="!strip !check !tracedeps"
 install=
 source="
@@ -101,24 +101,22 @@ build() {
 	make ARCH="$_carch" CC="${CC:-gcc}" \
 		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine" CONFIG_NO_ERROR_ON_MISMATCH=y \
 		modules || return 1
+
+	dtbTool -s 2048 -p "scripts/dtc/" -o "arch/arm/boot/dt.img" "arch/arm/boot/"
 }
 
 package() {
+	install -Dm644 "$srcdir/build/arch/arm/boot/dt.img" \
+		"$pkgdir/boot/dt.img"
+
 	install -Dm644 "$srcdir/build/arch/arm/boot/zImage" \
 		"$pkgdir/boot/vmlinuz-$_flavor"
-#	cat "$srcdir/build/arch/arm/boot/zImage-dtb" \
-#		"$srcdir/build/arch/arm/boot/msm8974pro-ab-pm8941-mtp.dtb" > \
-#		"$srcdir/build/arch/arm/boot/zImage-dtb-appended"
-#	install -Dm644 "$srcdir/build/arch/arm/boot/zImage-dtb-appended" \
-#		"$pkgdir/boot/vmlinuz-$_flavor"
 
 	install -D "$srcdir/build/include/config/kernel.release" \
 		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
 
-	#dtbTool -o "$pkgdir/boot/dt.img-$_flavor" -s 2048 -p "$srcdir/build/scripts/dtc/" "$srcdir/build/arch/arm/boot/"
-	#chmod 644 "$pkgdir/boot/dt.img-$_flavor"
-	install -Dm644 "$srcdir/fp2-sibon-17.06.4-dt.img" \
-		"$pkgdir/boot/dt.img"
+#	install -Dm644 "$srcdir/fp2-sibon-17.06.4-dt.img" \
+#		"$pkgdir/boot/dt.img"
 #		"$pkgdir/boot/dt.img-$_flavor"
 
 	cd "$srcdir"/build
@@ -130,9 +128,9 @@ package() {
 		|| return 1
 }
 
-sha512sums="0120c3b27f14974d9321fc07495e0b266723853d49379d2ce47c41d1ecf0c9818e2c9a0a958ff2ee2926999fcd53ce6ec67166846d9168458e89227f7995002d  4c0f2c3c6f394162fdb98f5e20dec346e8f4cfdc.zip
+sha512sums="2411561b1bb9d80225aff67dde487a866040ea335a6b443bd76a9fc6f70f6dcbd3c564603c44733930565294984f77bf4b4c13045f3aa63798277c0cbfb314e0  1b9ae5cd7249fc2b354092798fb889c5917d8a0e.zip
 604fc1e4b5948af5c46505be2210d346993f1bd7eabbd7cecfa915c7f3c51dabf62eacb818bf528010b8e794fc3307bbee1730855e8b2a1a40061f6dc9de1573  fp2-sibon-17.06.4-dt.img
-f502797ad1f24a1a189f7593c7ee27fbef8af23bf97e5ee4330449bcdc09624bddf44ec3b1fb1694d15f1f2caea5fbda01309a07f3563f3954767b7f8bbf17d3  config-fairphone-fp2.armhf
+1c0dedd750213301f7384907356c8115082a23d6105e39ce8fed3f5b911832fa4be92fd59397ca2c3faf185bc95cbb790ad3a27431f70631476f937a821b72b8  config-fairphone-fp2.armhf
 d80980e9474c82ba0ef1a6903b434d8bd1b092c40367ba543e72d2c119301c8b2d05265740e4104ca1ac5d15f6c4aa49e8776cb44264a9a28dc551e0d1850dcc  compiler-gcc6.h
 ea1d3b5a234fa565e3c1a792de48f4fc4e6023d281d303c8e319c7ef28edc5739ab0e4dea0139a41f0a5c7d03e27921ccaa214fd0ac5c72245a094ce60128864  aeea3592a13bf12861943e44fc48f1f270941f8d.patch
 7be03a9e78b7ac330a54b1f00509caa0621a95c0c55901878ad757f9dd69cc05ba2c8b5ea987063ae1224f92c4d090d515fa5d369e7755181a4871b0d0f82881  gpu-msm-fix-gcc5-compile.patch
