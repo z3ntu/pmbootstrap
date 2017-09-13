@@ -24,7 +24,7 @@ deviceinfo_screen_height="1920"
 deviceinfo_generate_bootimg="true"
 deviceinfo_bootimg_qcdt="true"
 
-deviceinfo_kernel_cmdline="console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x3b7 ehci-hcd.park=3 androidboot.bootdevice=msm_sdcc.1"
+deviceinfo_kernel_cmdline="console=ttyHSL0,115200,n8 PMOS_NO_OUTPUT_REDIRECT"
 deviceinfo_flash_offset_kernel="0x00000000"
 deviceinfo_flash_offset_ramdisk="0x02000000"
 #deviceinfo_flash_offset_ramdisk="0x01000000"
