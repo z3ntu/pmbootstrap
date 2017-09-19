@@ -20,7 +20,7 @@ Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/input/mouse/lifebook.h b/drivers/input/mouse/lifebook.h
-index 4c4326c6f5042..0baf02a70a993 100644
+index 4c4326c6f504..0baf02a70a99 100644
 --- a/drivers/input/mouse/lifebook.h
 +++ b/drivers/input/mouse/lifebook.h
 @@ -16,14 +16,14 @@ void lifebook_module_init(void);
@@ -41,3 +41,6 @@ index 4c4326c6f5042..0baf02a70a993 100644
  {
  	return -ENOSYS;
  }
+-- 
+2.14.1
+
