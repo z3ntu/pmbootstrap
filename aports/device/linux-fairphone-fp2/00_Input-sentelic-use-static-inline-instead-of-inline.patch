@@ -14,7 +14,7 @@ Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/input/mouse/sentelic.h b/drivers/input/mouse/sentelic.h
-index aa697ece405b1..42df9e3beae8c 100644
+index aa697ece405b..42df9e3beae8 100644
 --- a/drivers/input/mouse/sentelic.h
 +++ b/drivers/input/mouse/sentelic.h
 @@ -123,11 +123,11 @@ struct fsp_data {
@@ -31,3 +31,6 @@ index aa697ece405b1..42df9e3beae8c 100644
  {
  	return -ENOSYS;
  }
+-- 
+2.14.1
+
