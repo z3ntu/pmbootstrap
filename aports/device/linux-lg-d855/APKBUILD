@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=6
+pkgrel=7
 arch="armhf"
 pkgdesc="LG G3 kernel from LineageOS"
 url="https://github.com/LineageOS/android_kernel_lge_g3"

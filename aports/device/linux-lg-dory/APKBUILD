@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=0
+pkgrel=1
 arch="armhf"
 pkgdesc="Kernel for LG G Watch"
 url="https://android.googlesource.com/kernel/msm/+/android-msm-dory-3.10-marshmallow-mr1-wear-release"

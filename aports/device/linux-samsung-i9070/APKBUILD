@@ -27,7 +27,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=7
+pkgrel=8
 arch="armhf"
 pkgdesc="Samsung Galaxy S Advance kernel from Epirex"
 url="https://github.com/Epirex/Samsung_STE_Kernel"

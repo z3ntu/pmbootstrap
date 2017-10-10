@@ -20,7 +20,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=4
+pkgrel=5
 arch="armhf"
 pkgdesc="HTC Desire kernel from OpenDesireProject"
 url="https://github.com/OpenDesireProject/android_kernel_htc_msm7x30"

@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=2
+pkgrel=3
 arch="armhf"
 pkgdesc="LineageOS kernel for Fairphone 2"
 url="https://github.com/LineageOS/android_kernel_fairphone_msm8974"

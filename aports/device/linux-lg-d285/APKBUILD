@@ -15,7 +15,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=0
+pkgrel=1
 arch="armhf"
 pkgdesc="LineageOS kernel for LG L65"
 url="https://github.com/LineageOS/android_kernel_lge_msm8226"

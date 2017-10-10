@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=3
+pkgrel=4
 arch="armhf"
 pkgdesc="Sony Xperia Z kernel"
 url="https://github.com/LineageOS/android_kernel_sony_apq8064"

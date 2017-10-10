@@ -23,7 +23,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=6
+pkgrel=7
 arch="armhf"
 pkgdesc="G Watch R kernel"
 url="https://github.com/Tsunamical/kernel_lge_bass-lenok"

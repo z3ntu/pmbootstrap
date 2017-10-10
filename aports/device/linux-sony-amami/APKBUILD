@@ -23,7 +23,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=8
+pkgrel=9
 arch="armhf"
 pkgdesc="Sony Xperia Z1 Compact kernel"
 url="https://github.com/sonyxperiadev/kernel"

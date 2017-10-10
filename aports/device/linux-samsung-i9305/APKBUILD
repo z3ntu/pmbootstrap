@@ -23,7 +23,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=2
+pkgrel=3
 arch="armhf"
 pkgdesc="Samsung Galaxy SIII LTE kernel from LineageOS"
 url="https://github.com/LineageOS/android_kernel_samsung_smdk4412"

@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=3
+pkgrel=4
 arch="aarch64"
 pkgdesc="LineageOS kernel for Nexus 6P Angler"
 url="https://github.com/LineageOS/android_kernel_huawei_angler"

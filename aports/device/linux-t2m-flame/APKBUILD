@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=7
+pkgrel=8
 arch="armhf"
 pkgdesc="T2M flame kernel"
 url="https://github.com/mozilla-b2g/codeaurora_kernel_msm"

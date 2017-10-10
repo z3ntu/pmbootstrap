@@ -22,7 +22,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=2
+pkgrel=3
 arch="armhf"
 pkgdesc="Kernel for Huawei MSM8x1x devices"
 url="https://github.com/PieroV/${_repository}"

@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=5
+pkgrel=6
 arch="armhf"
 pkgdesc="Nexus 7 (2012) kernel from LineageOS"
 url="https://github.com/LineageOS/android_kernel_asus_grouper"

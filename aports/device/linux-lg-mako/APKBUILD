@@ -21,7 +21,7 @@ case $pkgver in
 	*.*.*)  _kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
 esac
-pkgrel=6
+pkgrel=7
 arch="armhf"
 pkgdesc="Nexus 4 kernel from LineageOS"
 url="https://github.com/LineageOS/lge-kernel-mako"
