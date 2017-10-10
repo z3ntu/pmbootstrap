@@ -8,6 +8,7 @@
 # Kernel config changes, based on: arch/arm/configs/fusion3_yuga_defconfig
 # - enable devtmpfs (needed for udev -> touch support in weston)
 # - set CONFIG_USB_ETH=y and CONFIG_USB_ETH_RNDIS=y (needed for ethernet over USB (rndis))
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=sony
 _flavor=sony-yuga

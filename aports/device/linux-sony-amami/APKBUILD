@@ -10,6 +10,7 @@
 # - change compression from CONFIG_KERNEL_LZMA=y to
 #	CONFIG_KERNEL_GZIP=y (so it works with busybox)
 # - disable proprietary graphics driver
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=sony
 _flavor=sony-amami

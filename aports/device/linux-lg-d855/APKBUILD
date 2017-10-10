@@ -8,6 +8,7 @@
 # Kernel config based on: arch/arm/configs/lineageos_d855_defconfig
 # Changes:
 # - enable devtmpfs (needed for udev -> touch support in weston)
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=lge
 _flavor=lg-d855

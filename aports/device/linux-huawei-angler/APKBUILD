@@ -8,6 +8,7 @@
 # Kernel config based on: arch/arm64/configs/lineageos_angler_defconfig
 # Changes:
 # - enable devtmpfs (needed for udev -> touch support in weston)
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=huawei
 _flavor=huawei-angler

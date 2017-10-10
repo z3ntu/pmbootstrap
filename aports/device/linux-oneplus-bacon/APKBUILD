@@ -9,6 +9,7 @@
 # - enable loadable module support
 # - enable devtmpfs (needed for udev -> touch support in weston)
 # - enable virtual terminal
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=oneplus
 _flavor=oneplus-bacon

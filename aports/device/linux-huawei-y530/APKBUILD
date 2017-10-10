@@ -8,6 +8,7 @@
 # - enable devtmpfs (needed for udev -> touch support in weston)
 # - disable input mouse driver
 # - enable generation of dtb
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=huawei
 _flavor=huawei-y530

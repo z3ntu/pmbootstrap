@@ -10,6 +10,7 @@
 # - enabled CONFIG_VT (needed for weston to work)
 # - Added ata2001's refresh rate fix for 60hz (otherwise screen is stuck at 15hz)
 # - Enable generation of dtb
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=lge
 _flavor=lg-lenok

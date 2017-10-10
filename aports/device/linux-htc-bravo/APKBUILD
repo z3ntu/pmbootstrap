@@ -8,6 +8,7 @@
 # - apply patches to compile with gcc6
 # - enable devtmpfs (needed for udev -> touch support in weston)
 # - enable udev required options (https://wiki.gentoo.org/wiki/Udev#Kernel)
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=htc
 _flavor=htc-bravo

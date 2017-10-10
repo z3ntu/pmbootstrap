@@ -7,6 +7,7 @@
 # Changes:
 # - apply patches to compile
 # - enable devtmpfs (needed for udev -> touch support in weston)
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=htc
 _flavor=htc-ace

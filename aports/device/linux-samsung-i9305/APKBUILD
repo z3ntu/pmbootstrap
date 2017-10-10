@@ -10,6 +10,7 @@
 # - enable devtmpfs (needed for udev -> touch support in weston)
 # - adding xz to makedepends because of lzma: unrecognized option: 9 (https://yuvadm.github.io/pmosweb/wiki/Troubleshooting:kernel/)
 # - add kernel modules installation
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=samsung
 _flavor=samsung-i9305

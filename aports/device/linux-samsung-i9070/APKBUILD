@@ -14,6 +14,7 @@
 #
 # Kernel config changes, based on: arch/arm/configs/janice_defconfig
 # - enable devtmpfs (needed for udev -> touch support in weston)
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=samsung
 _flavor=samsung-i9070

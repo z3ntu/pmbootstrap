@@ -8,6 +8,7 @@
 # - apply patches to compile with gcc6
 # - enable devtmpfs (needed for udev -> touch support in weston)
 # - enabled CONFIG_VT (needed for weston to work)
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=lge
 _flavor=lg-dory

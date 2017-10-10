@@ -7,6 +7,7 @@
 # Kernel config based on: arch/arm/configs/lineageos_mako_defconfig
 # Changes:
 # - enable devtmpfs (needed for udev -> touch support in weston)
+# - disable ANDROID_PARANOID_NETWORK (removes network restrictions)
 
 _vendor=lg
 _flavor=lg-hammerhead
