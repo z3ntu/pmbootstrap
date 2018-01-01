@@ -24,7 +24,8 @@ source="
 	config-${_flavor}.armhf
 	config-${_flavor}.aarch64
 	config-${_flavor}.x86_64
-	001-sony-amami-dts.patch
+	0001-sony-amami-dts.patch
+	0002-tools-objtool-Makefile-don-t-assume-sync-check.sh-is.patch
 "
 
 subpackages="$pkgname-dev::$CBUILD_ARCH"
@@ -175,4 +176,5 @@ b68965ef7b78ed9a0547d3a00432b0afaa8441a77412026c84d9b91b751f62d54cb263ec0ffc3547
 a75225750193cf31c8b6c15e7748699f842ecadc9ed573f0b10f42bb5343b4e092bcb65b359d170a42a102a4ddfe09d63c1d67550f4b99c29295fa22e1d7b995  config-postmarketos-mainline.armhf
 6310035a0a4c028cc98cab92919cca54be9b79ee9fe63211e7a05876d7befdbd8506a2f80548e228e014e99b0f91f63946352789d8d2f2134c66914163f66ab3  config-postmarketos-mainline.aarch64
 3d42c60061d12a436d19ffdf00623ea71ca31f16f690ae82ebf872d35177c283b4038cd5e270f4e610d6cf6861cef73ac63c995f1f4cfe9d6f2a4a8648ba28fb  config-postmarketos-mainline.x86_64
-e0fb34032fe70d9a4713ed521b8a5e29cf7f76cb7c56ceb24ed7206a8445ba743226e4873fa2069077952e21f99fb36eabf7c4daa779f565961f0dded4591887  001-sony-amami-dts.patch"
+e0fb34032fe70d9a4713ed521b8a5e29cf7f76cb7c56ceb24ed7206a8445ba743226e4873fa2069077952e21f99fb36eabf7c4daa779f565961f0dded4591887  0001-sony-amami-dts.patch
+04863696e5ed64a8fe41b3ac49c4f7e3028a945c3abf74467e0b0b39d57748f1f89269776f4e0301e2f996738f29a1e1932b3c121d6530a889eb3c1fd91a7af4  0002-tools-objtool-Makefile-don-t-assume-sync-check.sh-is.patch"
