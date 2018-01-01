@@ -67,9 +67,6 @@ prepare() {
 		return 1
 	fi
 
-	# Set correct permissions for scripts (see #950) 
-	chmod +x "$ksrcdir"/tools/objtool/sync-check.sh 
-
 	mkdir -p "$srcdir"/build
 	cp -v "$srcdir"/$_config "$srcdir"/build/.config
 	make -C "$ksrcdir" O="$srcdir"/build ARCH="$_carch" HOSTCC="$HOSTCC" \
