@@ -16,20 +16,20 @@ HOSTCC="${HOSTCC#${CROSS_COMPILE}}"
 
 # Source
 _repository="android_kernel_fairphone_FP1"
-_commit="b7696d6b1a0743797cda84baf6ba810fa8ba52b0"
+_commit="e3f9b6c71f1af886d26d7af883290c0baf38783a"
 _config="config-${_flavor}.${arch}"
 source="
 	$pkgname-$_commit.tar.gz::https://github.com/z3ntu/${_repository}/archive/${_commit}.tar.gz
 	$_config
 	compiler-gcc6.h
 "
-builddir="$srcdir/${_repository}-${_commit}/kernel"
+builddir="$srcdir/${_repository}-${_commit}"
 
 prepare() {
 	default_prepare
 
 	# gcc6 support
-	cp -v "$srcdir/compiler-gcc6.h" "$builddir/include/linux/"
+	cp -v "$srcdir/compiler-gcc6.h" "$builddir/kernel/include/linux/"
 
 	# Remove -Werror from all makefiles
 	local i
@@ -46,7 +46,7 @@ prepare() {
 }
 
 menuconfig() {
-	cd "$builddir"
+	cd "$builddir"/kernel
 	make ARCH="$_carch" menuconfig
 	cp .config "$startdir"/$_config
 }
@@ -62,11 +62,11 @@ build() {
 
 package() {
 	# kernel.release
-	install -D "$builddir/include/config/kernel.release" \
+	install -D "$builddir/kernel/include/config/kernel.release" \
 		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
 
 	# zImage (find the right one)
-	cd "$builddir/arch/$_carch/boot"
+	cd "$builddir/kernel/arch/$_carch/boot"
 	_target="$pkgdir/boot/vmlinuz-$_flavor"
 	for _zimg in zImage-dtb Image.gz-dtb *zImage Image; do
 		[ -e "$_zimg" ] || continue
@@ -80,6 +80,6 @@ package() {
 	fi
 }
 
-sha512sums="0c809a9c1960d707544e64569a311d1caa38487a9c0e92f5cd64c32dd34c74deaaf575b98fb9ec2aa4cc794084eff6d2f93cd0a61454fe4ce06adbe6827db3b2  linux-fairphone-fp1-b7696d6b1a0743797cda84baf6ba810fa8ba52b0.tar.gz
+sha512sums="ced4ab63d5ab9f9727dce0c45468e0753eb70622d7916d22725e44985a1f47e77f79895354838919f49da8faaa12bd8cd0ca774ef5e70a6b1820a5e1add8b8a5  linux-fairphone-fp1-e3f9b6c71f1af886d26d7af883290c0baf38783a.tar.gz
 f6169a6da30b1b8902ebbe30dfc85efe5953357163d75f048c913792bc5f40c15e812efad2e175d90b9c12abc59cb15c0f74db19f334c1eef071d994666fdddd  config-fairphone-fp1.armhf
 d80980e9474c82ba0ef1a6903b434d8bd1b092c40367ba543e72d2c119301c8b2d05265740e4104ca1ac5d15f6c4aa49e8776cb44264a9a28dc551e0d1850dcc  compiler-gcc6.h"
