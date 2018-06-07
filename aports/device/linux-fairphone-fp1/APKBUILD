@@ -42,6 +42,7 @@ prepare() {
 
 	# Prepare kernel config ('yes ""' for kernels lacking olddefconfig)
 	cp "$srcdir"/$_config "$builddir"/kernel/.config
+	cd kernel
 	yes "" | make ARCH="$_carch" HOSTCC="$HOSTCC" oldconfig
 }
 
