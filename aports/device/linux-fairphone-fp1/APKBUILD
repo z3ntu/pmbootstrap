@@ -16,7 +16,7 @@ HOSTCC="${HOSTCC#${CROSS_COMPILE}}"
 
 # Source
 _repository="android_kernel_fairphone_FP1"
-_commit="e3f9b6c71f1af886d26d7af883290c0baf38783a"
+_commit="f1a2a1f0b862cb96c669881cd31ba7729e31d90f"
 _config="config-${_flavor}.${arch}"
 source="
 	$pkgname-$_commit.tar.gz::https://github.com/z3ntu/${_repository}/archive/${_commit}.tar.gz
@@ -81,6 +81,6 @@ package() {
 	fi
 }
 
-sha512sums="ced4ab63d5ab9f9727dce0c45468e0753eb70622d7916d22725e44985a1f47e77f79895354838919f49da8faaa12bd8cd0ca774ef5e70a6b1820a5e1add8b8a5  linux-fairphone-fp1-e3f9b6c71f1af886d26d7af883290c0baf38783a.tar.gz
+sha512sums="00f02c71ed097ba40530c000df24539234fab110d08477578ed31bd6f6c92cff2d48611e01dccba6cb54aaf83b0739df27c9684112eb7d89e21a47e538b56b8b  linux-fairphone-fp1-f1a2a1f0b862cb96c669881cd31ba7729e31d90f.tar.gz
 f6169a6da30b1b8902ebbe30dfc85efe5953357163d75f048c913792bc5f40c15e812efad2e175d90b9c12abc59cb15c0f74db19f334c1eef071d994666fdddd  config-fairphone-fp1.armhf
 d80980e9474c82ba0ef1a6903b434d8bd1b092c40367ba543e72d2c119301c8b2d05265740e4104ca1ac5d15f6c4aa49e8776cb44264a9a28dc551e0d1850dcc  compiler-gcc6.h"
