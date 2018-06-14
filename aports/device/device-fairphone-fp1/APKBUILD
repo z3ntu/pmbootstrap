@@ -7,7 +7,7 @@ url="https://postmarketos.org"
 license="MIT"
 arch="noarch"
 options="!check"
-depends="postmarketos-base linux-fairphone-fp1 mkbootimg mesa-dri-swrast"
+depends="postmarketos-base linux-fairphone-fp1 mkbootimg mtk-mkimage mesa-dri-swrast"
 makedepends="devicepkg-dev"
 source="deviceinfo"
 
@@ -19,4 +19,4 @@ package() {
 	devicepkg_package $startdir $pkgname
 }
 
-sha512sums="fe06bbfcc91ad375128e465da6157a6ed4857da2911a1f32e106caefc19764d6eca3c7690286a899e725680e809c321968a26dd39298d61b631f153a5ad41098  deviceinfo"
+sha512sums="4702549963a86d17e4cea532dd0adafa035f296ef1d10c30e58eaa5e5dcf303ce032dbb11df9df93cfbc5e03a297a0fb91c3a842e6d53e5aaef568e413e8eac0  deviceinfo"

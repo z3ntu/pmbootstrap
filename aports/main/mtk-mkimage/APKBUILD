@@ -25,7 +25,10 @@ check() {
 
 package() {
 	cd "$builddir"
-	install -Dm755 mkimage "$pkgdir"/usr/bin/mkimage
+	# It's normally called mkimage but uboot-tools
+	# also provides an executable called mkimage,
+	# so call it mtk-mkimage
+	install -Dm755 mkimage "$pkgdir"/usr/bin/mtk-mkimage
 }
 
 sha512sums="279aa3b99b8cf81dcc6f83f1ad08dfc9cd516b5035b3e59baa051090e6159193ff3a2f12ad1b53cf8c8b8435f560780c461f4598cbb42a1be5697782e6202554  mkimage.c"

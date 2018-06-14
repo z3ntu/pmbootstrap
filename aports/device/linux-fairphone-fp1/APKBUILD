@@ -41,15 +41,10 @@ prepare() {
 	done
 
 	# Prepare kernel config ('yes ""' for kernels lacking olddefconfig)
+	mkdir -p "$srcdir"/build
 	cp "$srcdir"/$_config "$builddir"/kernel/.config
 	cd kernel
-	yes "" | make ARCH="$_carch" HOSTCC="$HOSTCC" oldconfig
-}
-
-menuconfig() {
-	cd "$builddir"/kernel
-	make ARCH="$_carch" menuconfig
-	cp .config "$startdir"/$_config
+	yes "" | make O="$srcdir"/build ARCH="$_carch" HOSTCC="$HOSTCC" oldconfig
 }
 
 build() {
@@ -69,7 +64,7 @@ package() {
 
 	cd "$builddir/kernel/arch/$_carch/boot"
 	# Add mediatek header to zImage
-	mkimage zImage KERNEL > zImage-mtk
+	mtk-mkimage zImage KERNEL > zImage-mtk
 	# Install modified zImage
 	install -Dm644 zImage-mtk "$pkgdir/boot/vmlinuz-$_flavor"
 }
