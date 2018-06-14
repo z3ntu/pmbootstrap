@@ -1,0 +1,31 @@
+# Contributor:
+# Maintainer:
+pkgname=mtk-mkimage
+pkgver=1
+pkgrel=0
+pkgdesc="Mediatek tool to add a custom header to an image"
+url="http://example.com"
+arch="all"
+license="???"
+depends=""
+makedepends=""
+install=""
+source="https://raw.githubusercontent.com/andr3jx/MTK6577/master/mediatek/source/kernel/trace32/tools/mkimage.c"
+builddir="$srcdir/"
+
+build() {
+	cd "$builddir"
+	gcc mkimage.c -o mkimage
+}
+
+check() {
+	cd "$builddir"
+	./mkimage -h
+}
+
+package() {
+	cd "$builddir"
+	install -Dm755 mkimage "$pkgdir"/usr/bin/mkimage
+}
+
+sha512sums="279aa3b99b8cf81dcc6f83f1ad08dfc9cd516b5035b3e59baa051090e6159193ff3a2f12ad1b53cf8c8b8435f560780c461f4598cbb42a1be5697782e6202554  mkimage.c"
