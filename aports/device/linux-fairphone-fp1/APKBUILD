@@ -55,6 +55,9 @@ build() {
 	export MTK_ROOT_CUSTOM=../mediatek/custom/
 	make ARCH="$_carch" CC="${CC:-gcc}" \
 		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+	make ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS" \
+		modules
 }
 
 package() {
