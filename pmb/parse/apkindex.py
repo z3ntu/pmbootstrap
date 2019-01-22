@@ -55,10 +55,13 @@ def parse_next_block(args, path, lines, start):
     mapping = {
         "A": "arch",
         "D": "depends",
+        "L": "license",
         "o": "origin",
         "P": "pkgname",
         "p": "provides",
+        "T": "pkgdesc",
         "t": "timestamp",
+        "U": "url",
         "V": "version",
     }
     end_of_block_found = False
@@ -84,7 +87,7 @@ def parse_next_block(args, path, lines, start):
     # Format and return the block
     if end_of_block_found:
         # Check for required keys
-        for key in ["arch", "pkgname", "version"]:
+        for key in ["arch", "license", "pkgname", "pkgdesc", "url", "version"]:
             if key not in ret:
                 raise RuntimeError("Missing required key '" + key +
                                    "' in block " + str(ret) + ", file: " + path)
@@ -385,3 +388,40 @@ def package(args, package, arch=None, must_exist=True, indexes=None):
         raise RuntimeError("Package '" + package + "' not found in any"
                            " APKINDEX.")
     return None
+
+
+def subpackages(args, wanted_origin, arch=None, must_exist=True, indexes=None):
+    """
+    TODO
+    Return all packages with the 'origin' origin
+    """
+
+    if not indexes:
+        arch = arch or args.arch_native
+        indexes = pmb.helpers.repo.apkindex_files(args, arch)
+
+    ret = []
+    for path in indexes:
+        # Skip indexes not providing the package
+        index_packages = parse(args, path)
+        if wanted_origin not in index_packages:
+            continue
+
+        # Iterate over found providers
+        for entry_pkgname, entry in index_packages.items():
+            for provider_pkgname, provider in entry.items():
+                # Skip lower versions of providers we already found
+                origin = provider["origin"]
+                if origin == wanted_origin:
+                    pkgname = provider["pkgname"]
+                    ret.append(pkgname)
+
+    if ret == {} and must_exist:
+        logging.debug("Searched in APKINDEX files: " + ", ".join(indexes))
+        raise RuntimeError("Could not find package '" + package + "'!")
+
+    # Remove duplicates from ret
+    ret = list(set(ret))
+    logging.debug("Found " + str(ret) + " with wanted origin " + wanted_origin)
+
+    return ret
