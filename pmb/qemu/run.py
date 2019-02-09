@@ -143,8 +143,8 @@ def command_qemu(args, arch, device, img_path, spice_enabled):
     command += ["-netdev",
                 "user,id=net0,"
                 "hostfwd=tcp::" + port_ssh + "-:22,"
-                "hostfwd=tcp::" + port_telnet + "-:23"
-                ",net=172.16.42.0/24,dhcpstart=" + pmb.config.default_ip
+                "hostfwd=tcp::" + port_telnet + "-:23,"
+                "net=172.16.42.0/24,dhcpstart=" + pmb.config.default_ip
                 ]
     command += ["-show-cursor"]
 
@@ -157,7 +157,7 @@ def command_qemu(args, arch, device, img_path, spice_enabled):
     if arch == "x86_64":
         command += ["-serial", "stdio"]
         command += ["-drive", "file=" + img_path + ",format=raw"]
-        command += ["-device", "e1000,netdev=net0"]
+        command += ["-device", "virtio-net-pci,netdev=net0"]
 
     elif arch == "arm":
         command += ["-M", "vexpress-a9"]
