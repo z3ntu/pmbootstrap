@@ -249,7 +249,7 @@ def kconfig(args):
     if args.action_kconfig == "check":
         # Default to all kernel packages
         packages = []
-        if args.package == "" or args.package is None:
+        if not args.file and args.package == "" or args.package is None:
             for aport in glob.glob(args.aports + "/*/linux-*"):
                 packages.append(os.path.basename(aport).split("linux-")[1])
         else:
@@ -260,7 +260,7 @@ def kconfig(args):
         skipped = 0
         packages.sort()
         for package in packages:
-            if not args.force:
+            if not args.force and not args.file:
                 aport = pmb.helpers.pmaports.find(args, "linux-" + package)
                 apkbuild = pmb.parse.apkbuild(args, aport + "/APKBUILD")
                 if "!pmb:kconfigcheck" in apkbuild["options"]:
