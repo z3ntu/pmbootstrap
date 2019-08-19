@@ -35,20 +35,15 @@ def is_set(config, option):
     return re.search("^CONFIG_" + option + "=[ym]", config, re.M) is not None
 
 
-def check_file(config_path, pkgver, flavor="local", details=False):
+def check_config(config_path, config_path_pretty, config_arch, pkgver, details=False):
     logging.debug("Check kconfig: " + config_path)
     with open(config_path) as handle:
         config = handle.read()
-
-    # The architecture of the config is in the name, so it just needs to be
-    # extracted
-    config_arch = os.path.basename(config_path).split(".")[1]
 
     ret = True
 
     # Loop trough necessary config options, and print a warning,
     # if any is missing
-    path = "linux-" + flavor + "/" + os.path.basename(config_path)
     for rule, archs_options in pmb.config.necessary_kconfig_options.items():
         # Skip options irrelevant for the current kernel's version
         if not pmb.parse.version.check_string(pkgver, rule):
@@ -75,11 +70,11 @@ def check_file(config_path, pkgver, flavor="local", details=False):
                         should = "should" if option_value else "should *not*"
                         link = ("https://wiki.postmarketos.org/wiki/"
                                 "Kernel_configuration#CONFIG_" + option)
-                        logging.info("WARNING: " + path + ": CONFIG_" + option + " " +
+                        logging.info("WARNING: " + config_path_pretty + ": CONFIG_" + option + " " +
                                      should + " be set. See <" + link +
                                      "> for details.")
                     else:
-                        logging.warning("WARNING: " + path + " isn't configured"
+                        logging.warning("WARNING: " + config_path_pretty + " isn't configured"
                                         " properly for postmarketOS, run"
                                         " 'pmbootstrap kconfig check' for"
                                         " details!")
@@ -93,10 +88,6 @@ def check(args, pkgname, details=False):
 
     :returns: True when the check was successful, False otherwise
     """
-    # Pkgname is a filename in this case
-    if args.file:
-        return check_file(pkgname, pkgver="5.2.0", details=details)
-
     # Pkgname: allow omitting "linux-" prefix
     if pkgname.startswith("linux-"):
         flavor = pkgname.split("linux-")[1]
@@ -110,5 +101,33 @@ def check(args, pkgname, details=False):
     aport = pmb.helpers.pmaports.find(args, "linux-" + flavor)
     pkgver = pmb.parse.apkbuild(args, aport + "/APKBUILD")["pkgver"]
     for config_path in glob.glob(aport + "/config-*"):
-        ret &= check_file(config_path, pkgver, flavor, details)
+        # The architecture of the config is in the name, so it just needs to be
+        # extracted
+        config_arch = os.path.basename(config_path).split(".")[1]
+        config_path_pretty = "linux-" + flavor + "/" + os.path.basename(config_path)
+        ret &= check_config(config_path, config_path_pretty, config_arch, pkgver, details)
     return ret
+
+
+def check_file(args, config_file, details=False):
+    # Extract the architecture out of the config
+    if is_set(config_file, "ARM"):
+        arch = "armv7"
+    elif is_set(config_file, "ARM64"):
+        arch = "aarch64"
+    elif is_set(config_file, "X86_32"):
+        arch = "x86"
+    elif is_set(config_file, "X86_64"):
+        arch = "x86_64"
+    else:
+        arch = "unknown"
+    # Try to extract the version string out of the comment header
+    with open(config_file) as f:
+        # Read the first 3 lines of the file
+        text = [next(f) for x in range(3)][2]
+    ver_match = re.match(r"# Linux/\S+ (\S+) Kernel Configuration", text)
+    if ver_match:
+        pkgver = ver_match.group(1)
+    else:
+        pkgver = "unknown"
+    return check_config(config_file, config_file, arch, pkgver, details)

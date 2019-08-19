@@ -247,9 +247,17 @@ def newapkbuild(args):
 
 def kconfig(args):
     if args.action_kconfig == "check":
+        # Handle passing a file directly
+        if args.file:
+            if not pmb.parse.kconfig.check_file(args, args.package, details=True):
+                raise RuntimeError("kconfig check failed!")
+            else:
+                logging.info("kconfig check succeeded!")
+                return
+
         # Default to all kernel packages
         packages = []
-        if not args.file and args.package == "" or args.package is None:
+        if args.package == "" or args.package is None:
             for aport in glob.glob(args.aports + "/*/linux-*"):
                 packages.append(os.path.basename(aport).split("linux-")[1])
         else:
@@ -260,7 +268,7 @@ def kconfig(args):
         skipped = 0
         packages.sort()
         for package in packages:
-            if not args.force and not args.file:
+            if not args.force:
                 aport = pmb.helpers.pmaports.find(args, "linux-" + package)
                 apkbuild = pmb.parse.apkbuild(args, aport + "/APKBUILD")
                 if "!pmb:kconfigcheck" in apkbuild["options"]:
