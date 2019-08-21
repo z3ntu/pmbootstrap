@@ -249,11 +249,10 @@ def kconfig(args):
     if args.action_kconfig == "check":
         # Handle passing a file directly
         if args.file:
-            if not pmb.parse.kconfig.check_file(args, args.package, details=True):
-                raise RuntimeError("kconfig check failed!")
-            else:
+            if pmb.parse.kconfig.check_file(args, args.package, details=True):
                 logging.info("kconfig check succeeded!")
                 return
+            raise RuntimeError("kconfig check failed!")
 
         # Default to all kernel packages
         packages = []

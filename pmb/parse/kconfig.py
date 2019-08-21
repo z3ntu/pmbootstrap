@@ -40,10 +40,9 @@ def check_config(config_path, config_path_pretty, config_arch, pkgver, details=F
     with open(config_path) as handle:
         config = handle.read()
 
-    ret = True
-
-    # Loop trough necessary config options, and print a warning,
+    # Loop through necessary config options, and print a warning,
     # if any is missing
+    ret = True
     for rule, archs_options in pmb.config.necessary_kconfig_options.items():
         # Skip options irrelevant for the current kernel's version
         if not pmb.parse.version.check_string(pkgver, rule):
@@ -109,25 +108,41 @@ def check(args, pkgname, details=False):
     return ret
 
 
-def check_file(args, config_file, details=False):
+def extract_arch(config_file):
     # Extract the architecture out of the config
-    if is_set(config_file, "ARM"):
-        arch = "armv7"
-    elif is_set(config_file, "ARM64"):
-        arch = "aarch64"
-    elif is_set(config_file, "X86_32"):
-        arch = "x86"
-    elif is_set(config_file, "X86_64"):
-        arch = "x86_64"
-    else:
-        arch = "unknown"
+    with open(config_file) as f:
+        config = f.read()
+    if is_set(config, "ARM"):
+        return "armv7"
+    elif is_set(config, "ARM64"):
+        return "aarch64"
+    elif is_set(config, "X86_32"):
+        return "x86"
+    elif is_set(config, "X86_64"):
+        return "x86_64"
+
+    # No match
+    logging.info("WARNING: failed to extract arch from kernel config")
+    return "unknown"
+
+
+def extract_version(config_file):
     # Try to extract the version string out of the comment header
     with open(config_file) as f:
-        # Read the first 3 lines of the file
+        # Read the first 3 lines of the file and get the third line only
         text = [next(f) for x in range(3)][2]
     ver_match = re.match(r"# Linux/\S+ (\S+) Kernel Configuration", text)
     if ver_match:
-        pkgver = ver_match.group(1)
-    else:
-        pkgver = "unknown"
-    return check_config(config_file, config_file, arch, pkgver, details)
+        return ver_match.group(1)
+
+    # No match
+    logging.info("WARNING: failed to extract version from kernel config")
+    return "unknown"
+
+
+def check_file(args, config_file, details=False):
+    arch = extract_arch(config_file)
+    version = extract_version(config_file)
+    print(arch)
+    print(version)
+    return check_config(config_file, config_file, arch, version, details)
