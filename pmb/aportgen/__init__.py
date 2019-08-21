@@ -20,14 +20,14 @@ import logging
 import os
 import re
 
-import pmb.aportgen.binutils
-import pmb.aportgen.busybox_static
+# import pmb.aportgen.binutils
+# import pmb.aportgen.busybox_static
 import pmb.aportgen.device
-import pmb.aportgen.gcc
+# import pmb.aportgen.gcc
 import pmb.aportgen.linux
-import pmb.aportgen.musl
-import pmb.aportgen.grub_efi
-#import pmb.aportgen.qt5
+# import pmb.aportgen.musl
+# import pmb.aportgen.grub_efi
+# import pmb.aportgen.qt5
 import pmb.aportgen.generic
 import pmb.config
 import pmb.helpers.cli
@@ -43,13 +43,12 @@ def properties(cross_pkgname):
     :param cross_pkgname: package name
     :returns: (pkgname, arch, folder, options)
     """
-    pmb.config.build_device_architectures
-    pattern = re.compile("(.*)-(armhf|armv7|aarch64|x86_64|x86)")
-    match = pattern.match(cross_pkgname)
+    # pmb.config.build_device_architectures
+    match = re.match(r"(.*)-(armhf|armv7|aarch64|x86|x86_64)", cross_pkgname)
     if match is None:
         raise ValueError("No generator available for " + cross_pkgname + "!")
     pkgname, arch = match.groups()
-    return (pkgname, arch, "cross", {"confirm_overwrite": False})
+    return pkgname, arch, "cross", {"confirm_overwrite": False}
 
     # for folder, options in pmb.config.aportgen.items():
     #     for prefix in options["prefixes"]:
