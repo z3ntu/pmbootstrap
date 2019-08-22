@@ -438,6 +438,9 @@ aportgen = {
         "confirm_overwrite": True,
     }
 }
+aportgen_origin = {
+    "grub-efi": "grub",
+}
 
 #
 # QEMU

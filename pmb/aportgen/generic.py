@@ -29,12 +29,17 @@ import pmb.parse.apkindex
 
 def generate(args, cross_pkgname, pkgname, arch):
     # Parse subpackages of pkgname from APKINDEX
-    subpackages = pmb.parse.apkindex.subpackages(args, pkgname)
+    subpackages = pmb.parse.apkindex.subpackages(args, pkgname, arch)
     if len(subpackages) == 0:
         subpackages = [pkgname]
 
+    # grub-efi-x86 is origin grub (grub-efi is a subpackage of grub)
+    apkindex_name = pmb.config.aportgen_origin.get(pkgname)
+    if apkindex_name is None:
+        apkindex_name = pkgname
+
     # Parse target version from APKINDEX
-    package_data = pmb.parse.apkindex.package(args, pkgname, arch)
+    package_data = pmb.parse.apkindex.package(args, apkindex_name, arch)
     version = package_data["version"]
     pkgver = version.split("-r")[0]
     pkgrel = version.split("-r")[1]
@@ -82,19 +87,19 @@ def generate(args, cross_pkgname, pkgname, arch):
     # Prepare "depends" line
     # print("Depends: " + str(depends))
     crossdepends = []
-    for depend in depends:
-        # We only care about .so dependencies
-        if not depend.startswith("so:"):
-            continue
-        providers = pmb.parse.apkindex.providers(args, depend, arch, must_exist=True)
-        # print("Providers: " + str(providers))
-        # print("len: " + str(len(providers)))
-        # Add name of provider
-        crossdep = list(providers.items())[0][0]
-        # ERROR: libstdc++-armhf-8.2.0-r2: trying to overwrite usr/armv6-alpine-linux-muslgnueabihf/lib/libstdc++.so.6 owned by g++-armhf-8.2.0-r2.
-        if crossdep == "libstdc++" or crossdep == "libgcc":
-            continue
-        crossdepends.append(crossdep + "-" + arch)
+    # for depend in depends:
+    #     # We only care about .so dependencies
+    #     if not depend.startswith("so:"):
+    #         continue
+    #     providers = pmb.parse.apkindex.providers(args, depend, arch, must_exist=True)
+    #     # print("Providers: " + str(providers))
+    #     # print("len: " + str(len(providers)))
+    #     # Add name of provider
+    #     crossdep = list(providers.items())[0][0]
+    #     # ERROR: libstdc++-armhf-8.2.0-r2: trying to overwrite usr/armv6-alpine-linux-muslgnueabihf/lib/libstdc++.so.6 owned by g++-armhf-8.2.0-r2.
+    #     if crossdep == "libstdc++" or crossdep == "libgcc":
+    #         continue
+    #     crossdepends.append(crossdep + "-" + arch)
 
     # Prepare subpackage-specific package() functions
     packagefuncstr = """

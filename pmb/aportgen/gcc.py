@@ -21,34 +21,32 @@ import pmb.helpers.git
 import pmb.helpers.run
 
 
-def generate(args, pkgname):
+def generate(args, cross_pkgname, pkgname, arch):
     # Copy original aport
-    prefix = pkgname.split("-")[0]
-    arch = pkgname.split("-")[1]
-    if prefix == "gcc":
+    if pkgname == "gcc":
         upstream = pmb.aportgen.core.get_upstream_aport(args, "main/gcc")
         based_on = "main/gcc (from Alpine)"
-    elif prefix == "gcc4":
+    elif pkgname == "gcc4":
         upstream = args.aports + "/main/gcc4"
         based_on = "main/gcc4 (from postmarketOS)"
-    elif prefix == "gcc6":
+    elif pkgname == "gcc6":
         upstream = args.aports + "/main/gcc6"
         based_on = "main/gcc6 (from postmarketOS)"
     else:
-        raise ValueError("Invalid prefix '" + prefix + "', expected gcc, gcc4 or"
+        raise ValueError("Invalid prefix '" + pkgname + "', expected gcc, gcc4 or"
                          " gcc6.")
     pmb.helpers.run.user(args, ["cp", "-r", upstream, args.work + "/aportgen"])
 
     # Rewrite APKBUILD (only building for x86_64 covers most use cases and
     # saves a lot of build time, can be changed on demand)
     fields = {
-        "pkgname": pkgname,
+        "pkgname": cross_pkgname,
         "pkgdesc": "Stage2 cross-compiler for " + arch,
         "arch": "x86_64",
         "depends": "isl binutils-" + arch + " mpc1",
         "makedepends_build": "gcc g++ paxmark bison flex texinfo gawk zip gmp-dev mpfr-dev mpc1-dev zlib-dev",
         "makedepends_host": "linux-headers gmp-dev mpfr-dev mpc1-dev isl-dev zlib-dev musl-dev-" + arch + " binutils-" + arch,
-        "subpackages": "g++-" + arch + ":gpp" if prefix == "gcc" else "",
+        "subpackages": "g++-" + arch + ":gpp" if pkgname == "gcc" else "",
 
         # gcc6: options is already there, so we need to replace it and not only
         # set it below the header like done below.
@@ -93,6 +91,6 @@ def generate(args, pkgname):
         '*_cross_configure=*': None,
     }
 
-    pmb.aportgen.core.rewrite(args, pkgname, based_on, fields,
+    pmb.aportgen.core.rewrite(args, cross_pkgname, based_on, fields,
                               replace_simple=replace_simple,
                               below_header=below_header)

@@ -21,9 +21,8 @@ import pmb.helpers.git
 import pmb.helpers.run
 
 
-def generate(args, pkgname):
+def generate(args, cross_pkgname, pkgname, arch):
     # Copy original aport
-    arch = pkgname.split("-")[1]
     upstream = pmb.aportgen.core.get_upstream_aport(args, "main/binutils")
     pmb.helpers.run.user(args, ["cp", "-r", upstream, args.work + "/aportgen"])
 
@@ -33,7 +32,7 @@ def generate(args, pkgname):
 
     # Rewrite APKBUILD
     fields = {
-        "pkgname": pkgname,
+        "pkgname": cross_pkgname,
         "pkgdesc": "Tools necessary to build programs for " + arch + " targets",
         "arch": " ".join(arches),
         "makedepends_build": "",
@@ -72,5 +71,5 @@ def generate(args, pkgname):
         "gold": None,
     }
 
-    pmb.aportgen.core.rewrite(args, pkgname, "main/binutils", fields,
+    pmb.aportgen.core.rewrite(args, cross_pkgname, "main/binutils", fields,
                               "binutils", replace_functions, remove_indent=8)
