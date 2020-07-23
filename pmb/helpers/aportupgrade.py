@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import urllib
+from typing import List
 
 import pmb.helpers.file
 import pmb.helpers.http
@@ -41,32 +42,38 @@ def init_req_headers() -> None:
         logging.info("NOTE: Consider using a GITHUB_TOKEN environment variable to increase your rate limit")
 
 
-def get_github_branch_arg(repo: str) -> str:
+def get_github_branch_arg(repo: str, branches: List[str]) -> str:
     """
     Get the branch to query for the latest commit
     :param repo: the repository name
+    :param branches: list of branches to use in order of preference
     :returns: e.g. "?sha=bionic" or ""
     """
-    if "ubports" not in repo:
+    # Short circuit if no branch was requested
+    if len(branches) == 0:
         return ""
-    # Get a list of branches to see if a 'bionic' branch exists
-    branches = pmb.helpers.http.retrieve_json(GITHUB_API_BASE + "/repos/" + repo + "/branches",
-                                              headers=req_headers_github)
-    for branch_o in branches:
-        if branch_o["name"] == "bionic":
-            return "?sha=bionic"
-    # Return no branch if 'bionic' does not exist
+
+    # Get a list of branches to see if one of the requested branches exist
+    branches_remote = pmb.helpers.http.retrieve_json(GITHUB_API_BASE + "/repos/" + repo + "/branches",
+                                                     headers=req_headers_github)
+    branch_names_remote = list(map(lambda x: x["name"], branches_remote))
+    logging.verbose(f"Available branches: {', '.join(branch_names_remote)}")
+
+    for branch in branches:
+        if branch in branch_names_remote:
+            return "?sha=" + branch
+    # Return no branch if no matching was found
     return ""
 
 
-def get_package_version_info_github(repo_name: str):
+def get_package_version_info_github(repo_name: str, branches: List[str]):
     logging.debug("Trying GitHub repository: {}".format(repo_name))
 
-    # Special case for ubports Unity 8 repos, we want to use the 'bionic' branch (where available)
-    branch = get_github_branch_arg(repo_name)
+    # Get the URL argument to request a special branch, if needed
+    branch_arg = get_github_branch_arg(repo_name, branches)
 
     # Get the commits for the repository
-    commits = pmb.helpers.http.retrieve_json(GITHUB_API_BASE + "/repos/" + repo_name + "/commits" + branch,
+    commits = pmb.helpers.http.retrieve_json(GITHUB_API_BASE + "/repos/" + repo_name + "/commits" + branch_arg,
                                              headers=req_headers_github)
     latest_commit = commits[0]
     commit_date = latest_commit["commit"]["committer"]["date"]
@@ -113,10 +120,14 @@ def upgrade_git_package(args, pkgname: str, package) -> bool:
 
     verinfo = None
 
+    branches = []
+    if args.branch is not None:
+        branches = args.branch.split(",")
+
     github_match = re.match(r"https://github\.com/(.+)/(?:archive|releases)", source)
     gitlab_match = re.match(r"(" + '|'.join(GITLAB_HOSTS) + ")/(.+)/-/archive/", source)
     if github_match:
-        verinfo = get_package_version_info_github(github_match.group(1))
+        verinfo = get_package_version_info_github(github_match.group(1), branches)
     elif gitlab_match:
         verinfo = get_package_version_info_gitlab(gitlab_match.group(1), gitlab_match.group(2))
 
