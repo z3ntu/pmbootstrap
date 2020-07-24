@@ -42,10 +42,10 @@ def init_req_headers() -> None:
         logging.info("NOTE: Consider using a GITHUB_TOKEN environment variable to increase your rate limit")
 
 
-def get_github_branch_arg(repo: str, branches: List[str]) -> str:
+def get_github_branch_arg(repo_name: str, branches: List[str]) -> str:
     """
     Get the branch to query for the latest commit
-    :param repo: the repository name
+    :param repo_name: the repository name
     :param branches: list of branches to use in order of preference
     :returns: e.g. "?sha=bionic" or ""
     """
@@ -54,8 +54,10 @@ def get_github_branch_arg(repo: str, branches: List[str]) -> str:
         return ""
 
     # Get a list of branches to see if one of the requested branches exist
-    branches_remote = pmb.helpers.http.retrieve_json(GITHUB_API_BASE + "/repos/" + repo + "/branches",
-                                                     headers=req_headers_github)
+    # We can get max. 100 branches, see https://docs.github.com/en/rest/reference/repos#list-branches
+    branches_remote = pmb.helpers.http.retrieve_json(
+        GITHUB_API_BASE + "/repos/" + repo_name + "/branches?per_page=100",
+        headers=req_headers_github)
     branch_names_remote = list(map(lambda x: x["name"], branches_remote))
     logging.verbose(f"Available branches: {', '.join(branch_names_remote)}")
 
@@ -63,6 +65,7 @@ def get_github_branch_arg(repo: str, branches: List[str]) -> str:
         if branch in branch_names_remote:
             return "?sha=" + branch
     # Return no branch if no matching was found
+    logging.info(f"No matching git branches for requested {', '.join(branches)} found.")
     return ""
 
 
@@ -73,8 +76,9 @@ def get_package_version_info_github(repo_name: str, branches: List[str]):
     branch_arg = get_github_branch_arg(repo_name, branches)
 
     # Get the commits for the repository
-    commits = pmb.helpers.http.retrieve_json(GITHUB_API_BASE + "/repos/" + repo_name + "/commits" + branch_arg,
-                                             headers=req_headers_github)
+    commits = pmb.helpers.http.retrieve_json(
+        GITHUB_API_BASE + "/repos/" + repo_name + "/commits" + branch_arg,
+        headers=req_headers_github)
     latest_commit = commits[0]
     commit_date = latest_commit["commit"]["committer"]["date"]
     # Extract the time from the field
@@ -85,12 +89,45 @@ def get_package_version_info_github(repo_name: str, branches: List[str]):
     }
 
 
-def get_package_version_info_gitlab(gitlab_host: str, repo_name: str):
+def get_gitlab_branch_arg(gitlab_host: str, repo_name_safe: str, branches: List[str]) -> str:
+    """
+    Get the branch to query for the latest commit
+    :param gitlab_host: the base url of the gitlab instance
+    :param repo_name_safe: the url-quoted repository name
+    :param branches: list of branches to use in order of preference
+    :returns: e.g. "?ref_name=librem5-3-34-1" or ""
+    """
+    # Short circuit if no branch was requested
+    if len(branches) == 0:
+        return ""
+
+    # Get a list of branches to see if one of the requested branches exist
+    # We can get max. 100 branches, see https://docs.gitlab.com/ee/api/README.html#pagination
+    branches_remote = pmb.helpers.http.retrieve_json(
+        gitlab_host + "/api/v4/projects/" + repo_name_safe + "/repository/branches?per_page=100",
+        headers=req_headers)
+    branch_names_remote = list(map(lambda x: x["name"], branches_remote))
+    logging.verbose(f"Available branches: {', '.join(branch_names_remote)}")
+
+    for branch in branches:
+        if branch in branch_names_remote:
+            return "?ref_name=" + branch
+    # Return no branch if no matching was found
+    logging.info(f"No matching git branches for requested {', '.join(branches)} found.")
+    return ""
+
+
+def get_package_version_info_gitlab(gitlab_host: str, repo_name: str, branches: List[str]):
     logging.debug("Trying GitLab repository: {}".format(repo_name))
+
+    repo_name_safe = urllib.parse.quote(repo_name, safe='')
+
+    # Get the URL argument to request a special branch, if needed
+    branch_arg = get_gitlab_branch_arg(gitlab_host, repo_name_safe, branches)
 
     # Get the commits for the repository
     commits = pmb.helpers.http.retrieve_json(
-        gitlab_host + "/api/v4/projects/" + urllib.parse.quote(repo_name, safe='') + "/repository/commits",
+        gitlab_host + "/api/v4/projects/" + repo_name_safe + "/repository/commits" + branch_arg,
         headers=req_headers)
     latest_commit = commits[0]
     commit_date = latest_commit["committed_date"]
@@ -129,7 +166,7 @@ def upgrade_git_package(args, pkgname: str, package) -> bool:
     if github_match:
         verinfo = get_package_version_info_github(github_match.group(1), branches)
     elif gitlab_match:
-        verinfo = get_package_version_info_gitlab(gitlab_match.group(1), gitlab_match.group(2))
+        verinfo = get_package_version_info_gitlab(gitlab_match.group(1), gitlab_match.group(2), branches)
 
     if verinfo is None:
         # ignore for now
