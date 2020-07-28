@@ -6,7 +6,7 @@ import logging
 import os
 import re
 import urllib
-from typing import List
+from typing import List, Optional
 
 import pmb.helpers.file
 import pmb.helpers.http
@@ -42,13 +42,19 @@ def init_req_headers() -> None:
         logging.info("NOTE: Consider using a GITHUB_TOKEN environment variable to increase your rate limit")
 
 
-def get_github_branch_arg(repo_name: str, branches: List[str]) -> str:
+def get_github_ref_arg(repo_name: str, branches: List[str],
+                       ref: Optional[str]) -> str:
     """
     Get the branch to query for the latest commit
     :param repo_name: the repository name
     :param branches: list of branches to use in order of preference
+    :param ref: TODO
     :returns: e.g. "?sha=bionic" or ""
     """
+    # Return argument with ref if specified
+    if ref is not None:
+        return "?sha=" + ref
+
     # Short circuit if no branch was requested
     if len(branches) == 0:
         return ""
@@ -69,15 +75,16 @@ def get_github_branch_arg(repo_name: str, branches: List[str]) -> str:
     return ""
 
 
-def get_package_version_info_github(repo_name: str, branches: List[str]):
+def get_package_version_info_github(repo_name: str, branches: List[str],
+                                    ref: Optional[str]):
     logging.debug("Trying GitHub repository: {}".format(repo_name))
 
     # Get the URL argument to request a special branch, if needed
-    branch_arg = get_github_branch_arg(repo_name, branches)
+    ref_arg = get_github_ref_arg(repo_name, branches, ref)
 
     # Get the commits for the repository
     commits = pmb.helpers.http.retrieve_json(
-        GITHUB_API_BASE + "/repos/" + repo_name + "/commits" + branch_arg,
+        GITHUB_API_BASE + "/repos/" + repo_name + "/commits" + ref_arg,
         headers=req_headers_github)
     latest_commit = commits[0]
     commit_date = latest_commit["commit"]["committer"]["date"]
@@ -89,14 +96,20 @@ def get_package_version_info_github(repo_name: str, branches: List[str]):
     }
 
 
-def get_gitlab_branch_arg(gitlab_host: str, repo_name_safe: str, branches: List[str]) -> str:
+def get_gitlab_ref_arg(gitlab_host: str, repo_name_safe: str,
+                       branches: List[str], ref: Optional[str]) -> str:
     """
     Get the branch to query for the latest commit
     :param gitlab_host: the base url of the gitlab instance
     :param repo_name_safe: the url-quoted repository name
     :param branches: list of branches to use in order of preference
+    :param ref: TODO
     :returns: e.g. "?ref_name=librem5-3-34-1" or ""
     """
+    # Return argument with ref if specified
+    if ref is not None:
+        return "?ref_name=" + ref
+
     # Short circuit if no branch was requested
     if len(branches) == 0:
         return ""
@@ -117,17 +130,18 @@ def get_gitlab_branch_arg(gitlab_host: str, repo_name_safe: str, branches: List[
     return ""
 
 
-def get_package_version_info_gitlab(gitlab_host: str, repo_name: str, branches: List[str]):
+def get_package_version_info_gitlab(gitlab_host: str, repo_name: str,
+                                    branches: List[str], ref: Optional[str]):
     logging.debug("Trying GitLab repository: {}".format(repo_name))
 
     repo_name_safe = urllib.parse.quote(repo_name, safe='')
 
     # Get the URL argument to request a special branch, if needed
-    branch_arg = get_gitlab_branch_arg(gitlab_host, repo_name_safe, branches)
+    ref_arg = get_gitlab_ref_arg(gitlab_host, repo_name_safe, branches, ref)
 
     # Get the commits for the repository
     commits = pmb.helpers.http.retrieve_json(
-        gitlab_host + "/api/v4/projects/" + repo_name_safe + "/repository/commits" + branch_arg,
+        gitlab_host + "/api/v4/projects/" + repo_name_safe + "/repository/commits" + ref_arg,
         headers=req_headers)
     latest_commit = commits[0]
     commit_date = latest_commit["committed_date"]
@@ -164,9 +178,9 @@ def upgrade_git_package(args, pkgname: str, package) -> bool:
     github_match = re.match(r"https://github\.com/(.+)/(?:archive|releases)", source)
     gitlab_match = re.match(r"(" + '|'.join(GITLAB_HOSTS) + ")/(.+)/-/archive/", source)
     if github_match:
-        verinfo = get_package_version_info_github(github_match.group(1), branches)
+        verinfo = get_package_version_info_github(github_match.group(1), branches, args.ref)
     elif gitlab_match:
-        verinfo = get_package_version_info_gitlab(gitlab_match.group(1), gitlab_match.group(2), branches)
+        verinfo = get_package_version_info_gitlab(gitlab_match.group(1), gitlab_match.group(2), branches, args.ref)
 
     if verinfo is None:
         # ignore for now
