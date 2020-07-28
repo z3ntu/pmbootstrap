@@ -6,7 +6,7 @@ import logging
 import os
 import re
 import urllib
-from typing import List, Optional
+from typing import Optional
 
 import pmb.helpers.file
 import pmb.helpers.http
